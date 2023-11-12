@@ -8,9 +8,13 @@ const y_text : HTMLElement = <HTMLElement>document.getElementById("y-text");
 const processor : HTMLElement = <HTMLElement>document.getElementById("processor");
 const framerate : HTMLElement = <HTMLElement>document.getElementById("framerate");
 const hardwareElement : HTMLElement = <HTMLElement>document.getElementById("hardware-select");
+//const particleNumELement : HTMLInputElement = <HTMLInputElement> document.getElementById("slider");
+//const particleNumStringElement : HTMLElement = <HTMLElement> document.getElementById("sliderValue");
 let posX : number;
 let posY : number;
 let mouseData = new Float32Array(2);
+
+let numParticles : number = 50000;
 
 let lastFrameTime = 0;
 let frameCount = 0;
@@ -35,6 +39,13 @@ hardwareElement.addEventListener('change', (event) => {
     hardwareChoice = (event.target as HTMLSelectElement).value;
     console.log(hardwareChoice);
 });
+
+// particleNumELement.addEventListener("input", (event : any) => {
+//     particleNumStringElement.textContent = <string> event.target.value;
+//     numParticles = <number> event.target.value;
+// });
+
+
 
 const Initialize = async() => {
     if (!navigator.gpu) {
@@ -80,7 +91,6 @@ const Initialize = async() => {
 
     // Create buffers for particles
     // Initial positions and velocities for the particles
-    let numParticles = 10000;
     let particlePositions = new Float32Array(numParticles * 2); // x, y for each particle
     let particleVelocities = new Float32Array(numParticles * 2); // vx, vy for each particle
     
