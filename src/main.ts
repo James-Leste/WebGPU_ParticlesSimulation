@@ -91,6 +91,7 @@ const Initialize = async() => {
 
     // Create buffers for particles
     // Initial positions and velocities for the particles
+    let numParticles = 1000000;
     let particlePositions = new Float32Array(numParticles * 2); // x, y for each particle
     let particleVelocities = new Float32Array(numParticles * 2); // vx, vy for each particle
     
