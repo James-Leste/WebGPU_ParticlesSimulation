@@ -80,7 +80,7 @@ const Initialize = async() => {
 
     // Create buffers for particles
     // Initial positions and velocities for the particles
-    let numParticles = 1000000;
+    let numParticles = 10000;
     let particlePositions = new Float32Array(numParticles * 2); // x, y for each particle
     let particleVelocities = new Float32Array(numParticles * 2); // vx, vy for each particle
     
@@ -273,8 +273,8 @@ const Initialize = async() => {
                 //particlePositions[i * 2 + 1] = Math.sign(particlePositions[ i * 2 + 1]) * boundary;
             } 
 
-            let dx = (posX-250)/250 - particlePositions[i * 2];
-            let dy = -(posY-250)/250 - particlePositions[i * 2 + 1];
+            let dx = (posX-400)/400 - particlePositions[i * 2];
+            let dy = -(posY-400)/400 - particlePositions[i * 2 + 1];
             let distanceToMouse = Math.sqrt(dx * dx + dy * dy);
 
             if (distanceToMouse < mouseInfluenceRadius) {

@@ -8,20 +8,21 @@
   <body>
     <div id="container">
       <div id="flex" style="display: flex; flex-direction: row;">
-        <canvas id="webgpu" width="500" height="500"></canvas>
-        <div style="height: 50%;">
+        <canvas id="webgpu" width="800" height="800"></canvas>
+        <div style="height: 100%; display: flex; flex-direction: column;">
           <select id="hardware-select">
             <option value="cpu">CPU</option>
             <option value="gpu" selected>GPU</option>
-          </select> 
-        </div>     
+          </select>
+          <h1 id="processor"></h1>
+          <h1 id="framerate"></h1>
+          <h1 id="x-axis"></h1>
+          <h1 id="y-axis"></h1>
+          <h1 id="x-text"></h1>
+          <h1 id="y-text"></h1> 
+        </div>  
+          
       </div>
-        <h1 id="processor"></h1>
-        <h1 id="framerate"></h1>
-        <h1 id="x-axis"></h1>
-        <h1 id="y-axis"></h1>
-        <h1 id="x-text"></h1>
-        <h1 id="y-text"></h1>
         
     </div>
 

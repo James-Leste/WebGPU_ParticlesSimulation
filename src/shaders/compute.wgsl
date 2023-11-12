@@ -36,8 +36,8 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
 
     
 
-    let dx = (mouse_axis.x-250)/250 - position[i * 2];
-    let dy = -(mouse_axis.y-250)/250 - position[i * 2 + 1];
+    let dx = (mouse_axis.x-400)/400 - position[i * 2];
+    let dy = -(mouse_axis.y-400)/400 - position[i * 2 + 1];
     let distanceToMouse = sqrt(dx * dx + dy * dy);
 
     if (distanceToMouse < mouseInfluenceRadius) {
