@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + TS</title>
+  </head>
+  <body>
+    <div id="container">
+      <div id="flex" style="display: flex; flex-direction: row;">
+        <canvas id="webgpu" width="500" height="500"></canvas>
+        <div style="height: 50%;">
+          <select id="hardware-select">
+            <option value="cpu">CPU</option>
+            <option value="gpu" selected>GPU</option>
+          </select> 
+        </div>     
+      </div>
+        <h1 id="processor"></h1>
+        <h1 id="framerate"></h1>
+        <h1 id="x-axis"></h1>
+        <h1 id="y-axis"></h1>
+        <h1 id="x-text"></h1>
+        <h1 id="y-text"></h1>
+        
+    </div>
+
+    <script type="module" src="./src/main.ts"></script>
+
+  </body>
+</html>
