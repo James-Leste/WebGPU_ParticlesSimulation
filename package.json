@@ -1,0 +1,28 @@
+{
+  "name": "gamble",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "npm run install-missing-denpendencies && vite",
+    "install-missing-denpendencies": "npm i",
+    "serve": "http-server",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.9.0",
+    "@webgpu/types": "^0.1.38",
+    "ts-loader": "^9.5.0",
+    "ts-shader-loader": "^2.0.2",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "vite": "^4.5.0",
+    "vite-plugin-glsl": "^1.1.2"
+  }
+}
