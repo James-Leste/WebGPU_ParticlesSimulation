@@ -91,7 +91,7 @@ const Initialize = async() => {
 
     // Create buffers for particles
     // Initial positions and velocities for the particles
-    let numParticles = 1000000;
+    let numParticles = 10000;
     let particlePositions = new Float32Array(numParticles * 2); // x, y for each particle
     let particleVelocities = new Float32Array(numParticles * 2); // vx, vy for each particle
     
@@ -261,12 +261,13 @@ const Initialize = async() => {
     function updateParticlesCPU() {
         processor.innerText = "Computed with CPU";
         const boundary = 1;
-        const gravity = 0.0001;
+        const gravity = 0.001;
         const speedthershold = 0.0001
         const mouseInfluenceRadius = 0.2; // Adjust this value as needed
         const mouseInfluenceFactor = 0.1; // Adjust this value as needed
 
         for (let i = 0; i < numParticles; i++) {
+            //particleVelocities[i * 2 + 1] -= gravity;
             particleVelocities[i * 2] += -Math.sign(particleVelocities[i * 2]) * gravity;
             particleVelocities[i * 2 + 1] += -Math.sign(particleVelocities[i * 2 + 1]) * gravity;
             particlePositions[i * 2] += particleVelocities[i * 2]; // Update x position
