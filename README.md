@@ -9,7 +9,9 @@ The demo application is a prototype of particle simulation. Using the compute pi
 ```
     $ npm start
 ```
-    Build production build
+
+Build production build
+
 ```
     $ npm build
 ```
