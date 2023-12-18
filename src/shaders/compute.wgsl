@@ -1,10 +1,14 @@
 
+// particle position array
 @binding(0) @group(0) var<storage, read_write> position: array<f32>;
+// particle velocity array
 @binding(1) @group(0) var<storage, read_write> velocity: array<f32>;
+// mouse axis vector (x, y)
 @binding(2) @group(0) var<storage, read_write> mouse_axis: vec2<f32>;
 
 
 @compute @workgroup_size(64)
+// global_id: current index in arrays
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     let i = global_id.x;
     let gravity = 0.0001;
@@ -34,7 +38,6 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
         //position[i].y = sign(position[i].y);
     }
 
-    
 
     let dx = (mouse_axis.x-400)/400 - position[i * 2];
     let dy = -(mouse_axis.y-400)/400 - position[i * 2 + 1];

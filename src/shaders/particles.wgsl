@@ -15,5 +15,5 @@ fn vertex_main(@location(0) position: vec4<f32>) -> VertexOut {
 @fragment
 fn fragment_main(fragData: VertexOut) -> @location(0) vec4<f32> {
     // Return red color regardless of the input color
-    return vec4<f32>(0.5, 1.0, 1.0, 1.0); // white color
+    return vec4<f32>(0.5, 0.0, 1.0, 1.0); // white color
 }
