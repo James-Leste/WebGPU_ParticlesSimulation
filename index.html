@@ -8,6 +8,7 @@
   <body>
     <div id="container">
       <div id="flex" style="display: flex; flex-direction: row;">
+        <!-- Base canvas -->
         <canvas id="webgpu" width="800" height="800"></canvas>
         <div style="height: 100%; display: flex; flex-direction: column;">
           <select id="hardware-select">
@@ -16,10 +17,15 @@
           </select>
           <!-- <input type="range" id="slider" min="0" max="1000000" value="50000">
           <p>Value: <span id="sliderValue">50000</span></p> -->
+
+          <!-- Label showing which processor is being used -->
           <h1 id="processor"></h1>
+          <!-- Label showing canvas framerate -->
           <h1 id="framerate"></h1>
+          <!-- Label showing mouse position -->
           <h1 id="x-axis"></h1>
           <h1 id="y-axis"></h1>
+          <!-- Not used -->
           <h1 id="x-text"></h1>
           <h1 id="y-text"></h1> 
         </div>  
