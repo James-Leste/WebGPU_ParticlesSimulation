@@ -1,12 +1,19 @@
 // This function initializes WebGPU and sets up the particle system.
 import particles from "./shaders/particles.wgsl"
 import compute from "./shaders/compute.wgsl"
+import { send } from "process";
+// HTML element for presenting X, Y axis value of mouse
 const x_axis : HTMLElement = <HTMLElement>document.getElementById("x-axis");
 const y_axis : HTMLElement = <HTMLElement>document.getElementById("y-axis");
-const x_text : HTMLElement = <HTMLElement>document.getElementById("x-text");
-const y_text : HTMLElement = <HTMLElement>document.getElementById("y-text");
+// Not used
+//const x_text : HTMLElement = <HTMLElement>document.getElementById("x-text");
+//const y_text : HTMLElement = <HTMLElement>document.getElementById("y-text");
+
+// Processor label
 const processor : HTMLElement = <HTMLElement>document.getElementById("processor");
+// frame rate label
 const framerate : HTMLElement = <HTMLElement>document.getElementById("framerate");
+// hardware selection bar
 const hardwareElement : HTMLElement = <HTMLElement>document.getElementById("hardware-select");
 //const particleNumELement : HTMLInputElement = <HTMLInputElement> document.getElementById("slider");
 //const particleNumStringElement : HTMLElement = <HTMLElement> document.getElementById("sliderValue");
@@ -14,8 +21,7 @@ let posX : number;
 let posY : number;
 let mouseData = new Float32Array(2);
 
-let numParticles : number = 50000;
-
+// data for calculating framerate
 let lastFrameTime = 0;
 let frameCount = 0;
 let elapsed = 0;
@@ -25,7 +31,7 @@ let hardwareChoice : string = "gpu";
 
 const centralRegionSize = 0.5;
 
-//get mouse movement
+//get mouse position as X, Y axis value
 function getMousePos(canvas: HTMLCanvasElement, event: any) {
     const rect = canvas.getBoundingClientRect();
     return {
@@ -46,7 +52,7 @@ hardwareElement.addEventListener('change', (event) => {
 // });
 
 
-
+// Initialize gpu
 const Initialize = async() => {
     if (!navigator.gpu) {
         throw Error('WebGPU not supported.');
@@ -58,28 +64,32 @@ const Initialize = async() => {
     const adapter : GPUAdapter = <GPUAdapter> await navigator.gpu.requestAdapter();
     const device : GPUDevice = <GPUDevice> await adapter.requestDevice();
 
-    // 记录鼠标位置
+    // 记录鼠标位置 record mouse position
     canvas.addEventListener('mousemove', function(event) {
         const mousePos = getMousePos(canvas, event);
         posX = mousePos.x;
         posY = mousePos.y;
         mouseData = new Float32Array([posX, posY]);
         // Do something with posX and posY
-        x_axis.innerText = "X: " + (mouseData[0]-250)/250;
-        y_axis.innerText = "Y: " + (mouseData[1]-250)/250;
+        x_axis.innerText = "X: " + mouseData[0]/800;
+        y_axis.innerText = "Y: " + mouseData[1]/800;
+
+        // send mouse position data to the buffer
         device.queue.writeBuffer(
             mouseBuffer,
-            0,
+            0, // bufferOffset (starting point)
             mouseData.buffer,
-            mouseData.byteOffset,
+            mouseData.byteOffset, // dataOffset
             mouseData.byteLength
         );
     });
 
+    // get context via <canvas> element
     const context : GPUCanvasContext = <GPUCanvasContext> canvas.getContext("webgpu");
 
     // Configure the context
-    const format = "bgra8unorm";
+    // recommended
+    const format = navigator.gpu.getPreferredCanvasFormat();
     context.configure({
         device: device,
         format: format
@@ -91,11 +101,13 @@ const Initialize = async() => {
 
     // Create buffers for particles
     // Initial positions and velocities for the particles
-    let numParticles = 10000;
+    let numParticles = 100000;
+    // [x_1, y_1, x_2, y_2 .... x_n, y_n]
     let particlePositions = new Float32Array(numParticles * 2); // x, y for each particle
-    let particleVelocities = new Float32Array(numParticles * 2); // vx, vy for each particle
+    // [v_x_1, v_y_1, v_x_2, v_y_2 .... v_x_n, v_y_n]
+    let particleVelocities = new Float32Array(numParticles * 2); // v_x, v_y for each particle
     
-
+    //Set all initial locations for all particles(Randomized in this case)
     for (let i = 0; i < numParticles; i++) {
         let x, y;
         do {
@@ -115,19 +127,26 @@ const Initialize = async() => {
     }
 
     // Create GPU buffers
+    // Buffer for particles location array
+    
     const particleBuffer = device.createBuffer({
+        label: "particleBuffer",
         size: particlePositions.byteLength,
         usage: GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
-        mappedAtCreation: true,
+        mappedAtCreation: true, // Make the buffer "mapped" at creation
     });
 
+    // Buffer for particle velocity array
     const velocityBuffer = device.createBuffer({
+        label: "velocityBuffer",
         size: particleVelocities.byteLength,
         usage: GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
         mappedAtCreation: true,
     });
 
+    // Buffer for mouse location array
     const mouseBuffer = device.createBuffer({
+        label: "mouseLocationBuffer",
         size: 2 * Float32Array.BYTES_PER_ELEMENT,
         usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
         mappedAtCreation: true,
@@ -150,8 +169,20 @@ const Initialize = async() => {
     //     usage: GPUBufferUsage.Math,
     //     mappedAtCreation: true
     // });
+
+
+    /* write data into buffer */
+
+    // GPUBuffer.mapState will print the mapping state of a Buffer
+    // mapped means the data in buffer can be accessed by JS 
+    // unmapped means the data can be used by GPU, can't be changed by JS
+
+    // mapped -> unmapped GPUBuffer.unmap()
+    // unmapped -> mapped GPUBuffer.Async()
     new Float32Array(particleBuffer.getMappedRange()).set(particlePositions);
+    console.log(particleBuffer.mapState)
     particleBuffer.unmap();
+    console.log(particleBuffer.mapState)
 
     new Float32Array(velocityBuffer.getMappedRange()).set(particleVelocities);
     velocityBuffer.unmap();
@@ -159,7 +190,10 @@ const Initialize = async() => {
     new Float32Array(mouseBuffer.getMappedRange()).set(mouseData);
     mouseBuffer.unmap();
     
+    // GPUbindGroupLayout is a template for GPUbindGroup
 
+    // It defines the structure and purpose of related GPU resources such as 
+    // buffers that will be used in a pipeline
     const bindGroupLayout = device.createBindGroupLayout({
         entries: [
             {
@@ -188,7 +222,10 @@ const Initialize = async() => {
             }]
     });
 
+    // GPUPipelineLayout defines how GPUbindGroupLayout be used by pipelines
+    // use GPUbindGroupLayout as template
     const computePipelineLayout : GPUPipelineLayout = device.createPipelineLayout({bindGroupLayouts:[bindGroupLayout]});
+    // GPUComputePipeline controls compute shader module
     const computePipeline : GPUComputePipeline = <GPUComputePipeline> device.createComputePipeline({
         layout : computePipelineLayout,
         compute: {
@@ -197,9 +234,8 @@ const Initialize = async() => {
         }
     })
 
-
-    // Create pipeline and bind group
     const renderPipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [] });
+    // GPUrenderPipeline controls vertex shader and fragment shader modules
     const renderPipeline : GPURenderPipeline = <GPURenderPipeline> device.createRenderPipeline({
         layout: renderPipelineLayout,
         vertex: {
@@ -262,7 +298,7 @@ const Initialize = async() => {
         processor.innerText = "Computed with CPU";
         const boundary = 1;
         const gravity = 0.001;
-        const speedthershold = 0.0001
+        //const speedthershold = 0.0001
         const mouseInfluenceRadius = 0.2; // Adjust this value as needed
         const mouseInfluenceFactor = 0.1; // Adjust this value as needed
 
@@ -310,7 +346,7 @@ const Initialize = async() => {
         
     }
 
-    async function updateParticlesGPU() {
+    function updateParticlesGPU() {
         processor.innerText = "Computed with GPU";
         const commandEncoder = device.createCommandEncoder();
         const passEncoder = commandEncoder.beginComputePass();
