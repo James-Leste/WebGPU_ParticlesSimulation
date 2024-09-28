@@ -101,7 +101,7 @@ const Initialize = async() => {
 
     // Create buffers for particles
     // Initial positions and velocities for the particles
-    let numParticles = 100000;
+    let numParticles = 1000000;
     // [x_1, y_1, x_2, y_2 .... x_n, y_n]
     let particlePositions = new Float32Array(numParticles * 2); // x, y for each particle
     // [v_x_1, v_y_1, v_x_2, v_y_2 .... v_x_n, v_y_n]
@@ -110,11 +110,14 @@ const Initialize = async() => {
     //Set all initial locations for all particles(Randomized in this case)
     for (let i = 0; i < numParticles; i++) {
         let x, y;
-        do {
-            x = (Math.random() * 2 - 1) * canvas.width / canvas.height; // x
-            y = (Math.random() * 2 - 1); // y
-        } while (Math.abs(x) < centralRegionSize && Math.abs(y) < centralRegionSize); // Check if the particle is within the central region
+        //Add a central square in the canvas
+        // do {
+        //     x = (Math.random() * 2 - 1) * canvas.width / canvas.height; // x
+        //     y = (Math.random() * 2 - 1); // y
+        // } while (Math.abs(x) < centralRegionSize && Math.abs(y) < centralRegionSize); // Check if the particle is within the central region
         
+        x = (Math.random() * 2 - 1) //x
+        y = (Math.random() * 2 - 1); // y
         particlePositions[i * 2] = x; // x
         particlePositions[i * 2 + 1] = y; // y
         

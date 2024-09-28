@@ -11,7 +11,7 @@
 // global_id: current index in arrays
 fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     let i = global_id.x;
-    let gravity = 0.0001;
+    let gravity = 0.001;
     let speedthershold = 0.0001;
     let mouseInfluenceRadius = 0.2; // Adjust this value as needed
     let mouseInfluenceFactor = 0.1; // Adjust this value as needed
@@ -29,11 +29,20 @@ fn main(@builtin(global_invocation_id) global_id : vec3<u32>) {
     position[i * 2 + 1] += velocity[i * 2 + 1];
 
     // Boundary checks
-    if (abs(position[i * 2]) > 1.0 ||    (    abs(position[i * 2]) < 0.5 && abs(position[i * 2 + 1])  < 0.5    )  ){
+    // if (abs(position[i * 2]) > 1.0 ||    (    abs(position[i * 2]) < 0.5 && abs(position[i * 2 + 1])  < 0.5    )  ){
+    //     velocity[i * 2] *= -1.0;
+    //     //position[i].x = sign(position[i].x);
+    // }
+    // if (abs(position[i * 2 + 1]) > 1.0 || (    abs(position[i * 2 + 1]) < 0.5 && abs(position[i * 2])  < 0.5    )  ) {
+    //     velocity[i * 2 + 1] *= -1.0;
+    //     //position[i].y = sign(position[i].y);
+    // }
+
+    if (abs(position[i * 2]) > 1.0){
         velocity[i * 2] *= -1.0;
         //position[i].x = sign(position[i].x);
     }
-    if (abs(position[i * 2 + 1]) > 1.0 || (    abs(position[i * 2 + 1]) < 0.5 && abs(position[i * 2])  < 0.5    )  ) {
+    if (abs(position[i * 2 + 1]) > 1.0) {
         velocity[i * 2 + 1] *= -1.0;
         //position[i].y = sign(position[i].y);
     }
